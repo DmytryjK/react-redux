@@ -1,30 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {legacy_createStore as createStore} from 'redux'
+import {legacy_createStore as createStore} from 'redux';
+import { bindActionCreators } from 'redux';
+import * as actions from './actions';
 
-const initialState = {value: 0};
-
-const reducer = (state = initialState, action) => {
-	switch (action.type) {
-		case 'INC':
-			return {
-				...state,
-				value: state.value + 1
-			};
-		case 'DEC':
-			return {
-				...state,
-				value: state.value - 1
-			};
-		case 'RND':
-			return {
-				...state,
-				value: state.value * action.payload
-			};
-		default:
-			return state;
-	}
-}
+import reducer from './reducer';
 
 const incr = document.getElementById('inc');
 const decr = document.getElementById('dec');
@@ -32,27 +12,34 @@ const rndm = document.getElementById('rnd');
 const title = document.getElementById('counter');
 
 const store = createStore(reducer);
+const { dispatch, subscribe, getState } = store;
 
 const update = () => {
-	title.textContent = store.getState().value;
+	title.textContent = getState().value;
 }
+subscribe(update);
 
-store.subscribe(update);
+// const bindActionCreator = (creator, dispatch) => (...args) => {
+// 	dispatch(creator(...args));
+// }
 
-const inc = () => ({type: 'INC'})
-const dec = () => ({type: 'DEC'})
-const rnd = (randomValue) => ({type: 'RND', payload: randomValue});
+// const {incDispatch, decDispatch, rndDispatch} = bindActionCreators({
+// 	incDispatch: inc,
+// 	decDispatch: dec,
+// 	rndDispatch: rnd
+// }, dispatch);
 
-incr.addEventListener('click', () => {
-	store.dispatch(inc());
-})
-decr.addEventListener('click', () => {
-	store.dispatch(dec());
-})
+const {inc, dec, rnd} = bindActionCreators(actions, dispatch);
+
+// const incDispatch = bindActionCreators(inc, dispatch);
+// const decDispatch = bindActionCreators(dec, dispatch);
+// const rndDispatch = bindActionCreators(rnd, dispatch);
+
+incr.addEventListener('click', inc);
+decr.addEventListener('click', dec);
 rndm.addEventListener('click', () => {
-	const randomValue = Math.floor(Math.random() - 10);
-
-	store.dispatch(rnd(randomValue));
+	const randomValue = Math.floor(Math.random() * 10);
+	rnd(randomValue);
 })
 
 
@@ -64,4 +51,3 @@ root.render(
         </>
     </React.StrictMode>
 );
-
