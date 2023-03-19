@@ -1,6 +1,9 @@
+import { connect } from "react-redux";
+import * as actions from '../actions';
+// import { bindActionCreators } from "redux";
 
 const Counter = ({counter, inc, dec, rnd}) => {
-    
+
     return (
         <div className="jumbotron">
             <h1>{counter}</h1>
@@ -11,4 +14,25 @@ const Counter = ({counter, inc, dec, rnd}) => {
     )
 }
 
-export default Counter;
+const mapStateToProps = (state) => {
+    return {
+        counter: state.value
+    }
+}
+
+// const mapDispatchToProps = (dispatch) => { //МОЖНО НЕ ПИСАТЬ ЭТУ ФУНКЦИЮ, А ПРОСТО 2-м АРГУМЕНТОМ ПЕРЕДАВАТЬ ЭКШЕНЫ В КОННЕКТ.
+//     return bindActionCreators(actions, dispatch);
+//     // return {
+//     //     // inc: () => dispatch(inc()), 
+//     //     // dec: () => dispatch(dec()), 
+//     //     // rnd: () => {
+//     //     //     const randomValue = Math.floor(Math.random() * 10); 
+//     //     //     dispatch(rnd(randomValue));
+//     //     // }
+//     //     inc, 
+//     //     dec,
+//     //     rnd
+//     // }
+// }
+
+export default connect(mapStateToProps, actions)(Counter);
